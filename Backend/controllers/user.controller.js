@@ -48,6 +48,25 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
     const { accessToken, refreshToken } = generateToken(user._id);
-    return res.status(200).json({ user, accessToken, refreshToken });
-  } catch (error) {}
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: "strict",
+    });
+    return res.status(200).json({
+      user: { id: user._id, email: user.email, fullname: user.fullname },
+      accessToken,
+    });
+  } catch (error) {
+    console.error("Error during login:", error);
+    return res
+      .status(500)
+      .json({ message: "Server Error.Please try again later." });
+  }
+};
+
+export const getProfile = async (req, res) => {
+  res.status(200).json(req.user);
 };
