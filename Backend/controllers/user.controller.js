@@ -3,6 +3,8 @@ import { validationResult } from "express-validator";
 import { hashPassword, comparePassword } from "../utils/password.utils.js";
 import { generateToken } from "../utils/generateToken.utils.js";
 import userModel from "../Models/user.model.js";
+import blacklistTokenModel from "../models/blacklistToken.model.js";
+import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
   const error = validationResult(req);
@@ -69,4 +71,35 @@ export const loginUser = async (req, res) => {
 
 export const getProfile = async (req, res) => {
   res.status(200).json(req.user);
+};
+
+export const logoutUser = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    return res.status(400).json({ message: "No refresh token provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    if (!decoded) {
+      return res.status(401).json({ message: "User" });
+    }
+
+    const user = await userModel.findById(decoded._id);
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    await blacklistTokenModel.create({
+      token: refreshToken,
+      userId: decoded._id,
+      expiresAt: new Date(Date.now() + 25),
+    });
+
+    res.clearCookie("refreshToken");
+    return res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
 };

@@ -231,3 +231,149 @@ curl -X POST http://localhost:4000/users/login \
   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
+
+## Endpoint: `/users/profile`
+
+### Description
+
+This endpoint is used to retrieve the profile information of the currently authenticated user. It requires a valid access token in the `Authorization` header.
+
+### Method
+
+`GET`
+
+### Request Headers
+
+- `Authorization`: `Bearer <access_token>`
+
+### Responses
+
+#### Success Response
+
+- **Status Code**: `200 OK`
+- **Response Body**:
+  ```json
+  {
+    "_id": "string",
+    "fullname": {
+      "firstname": "string",
+      "lastname": "string"
+    },
+    "email": "string",
+    "createdAt": "string",
+    "updatedAt": "string"
+  }
+  ```
+
+#### Authentication Error
+
+- **Status Code**: `401 Unauthorized`
+- **Response Body**:
+  ```json
+  {
+    "message": "Unauthorized"
+  }
+  ```
+
+#### Internal Server Error
+
+- **Status Code**: `500 Internal Server Error`
+- **Response Body**:
+  ```json
+  {
+    "message": "Internal Server Error"
+  }
+  ```
+
+### Example Request
+
+```bash
+curl -X GET http://localhost:4000/users/profile \
+-H "Authorization: Bearer <access_token>"
+```
+
+### Example Success Response
+
+```json
+{
+  "_id": "64f1c2e7e4b0f5a1d8c9a123",
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.doe@example.com",
+  "createdAt": "2023-10-01T12:00:00.000Z",
+  "updatedAt": "2023-10-01T12:00:00.000Z"
+}
+```
+
+## Endpoint: `/users/logout`
+
+### Description
+
+This endpoint is used to log out the current user by invalidating the refresh token. It requires the refresh token to be sent as a cookie.
+
+### Method
+
+`GET`
+
+### Request Cookies
+
+- `refreshToken`: string
+
+### Responses
+
+#### Success Response
+
+- **Status Code**: `200 OK`
+- **Response Body**:
+  ```json
+  {
+    "message": "Logged out successfully"
+  }
+  ```
+
+#### No Refresh Token Provided
+
+- **Status Code**: `400 Bad Request`
+- **Response Body**:
+  ```json
+  {
+    "message": "No refresh token provided"
+  }
+  ```
+
+#### Unauthorized
+
+- **Status Code**: `401 Unauthorized`
+- **Response Body**:
+  ```json
+  {
+    "message": "User not found"
+  }
+  ```
+
+#### Internal Server Error
+
+- **Status Code**: `500 Internal Server Error`
+- **Response Body**:
+  ```json
+  {
+    "message": "Server Error"
+  }
+  ```
+
+### Example Request
+
+```bash
+curl -X GET http://localhost:4000/users/logout \
+-H "Cookie: refreshToken=<refresh_token>"
+```
+
+### Example Success Response
+
+```json
+{
+  "message": "Logged out successfully"
+}
+```

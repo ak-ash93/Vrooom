@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB } from "./db/db.js";
 import cookieParser from "cookie-parser";
-import { userRoutes } from "./routes/index.js";
+import { authRoutes, userRoutes } from "./routes/index.js";
 dotenv.config();
 
 const app = express();
@@ -20,5 +20,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/users/", userRoutes);
+app.use("/auth/", authRoutes);
 
 export default app;
