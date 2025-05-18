@@ -16,7 +16,7 @@ export const registerDriver = async (req, res) => {
 
   const existingDriver = await driverModel.findOne({ email });
   if (existingDriver) {
-    return res.status(400).json({ message: "Driver already exists" });
+    return res.status(400).json({ message: "Profile already exists" });
   }
   try {
     const hashedPassword = await hashPassword(password);
@@ -89,4 +89,8 @@ export const loginDriver = async (req, res) => {
       .status(500)
       .json({ message: "Server Error.Please try again later." });
   }
+};
+
+export const getProfile = async (req, res) => {
+  res.status(200).json(req.driver);
 };
