@@ -13,6 +13,11 @@ export const registerUser = async (req, res) => {
     return res.status(400).json({ errors: error.array() });
   }
   const { fullname, email, password } = req.body;
+
+  const existingUser = await userModel.findOne({ email });
+  if (existingUser) {
+    return res.status(400).json({ message: "User already exists" });
+  }
   try {
     const hashedPassword = await hashPassword(password);
 
@@ -42,12 +47,12 @@ export const loginUser = async (req, res) => {
   try {
     const user = await userModel.findOne({ email }).select("+password");
     if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: "Credentials don't match" });
     }
 
     const isPasswordValid = await comparePassword(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: "Credentials don't match" });
     }
     const { accessToken, refreshToken } = generateToken(user._id);
 
@@ -93,7 +98,7 @@ export const logoutUser = async (req, res) => {
     await blacklistTokenModel.create({
       token: refreshToken,
       userId: decoded._id,
-      expiresAt: new Date(Date.now() + 25),
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000),
     });
 
     res.clearCookie("refreshToken");

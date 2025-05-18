@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB } from "./db/db.js";
 import cookieParser from "cookie-parser";
-import { authRoutes, userRoutes } from "./routes/index.js";
+import { authRoutes, userRoutes, driverRoutes } from "./routes/index.js";
 dotenv.config();
 
 const app = express();
@@ -21,5 +21,6 @@ app.get("/", (req, res) => {
 
 app.use("/users/", userRoutes);
 app.use("/auth/", authRoutes);
+app.use("/drivers/", driverRoutes);
 
 export default app;
