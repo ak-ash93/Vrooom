@@ -33,7 +33,7 @@ export const registerDriver = async (req, res) => {
       vehicleType: vehicle.vehicleType,
     });
     const { accessToken, refreshToken } = generateToken(driver._id);
-    res.status(201).json({
+    return res.status(201).json({
       driver,
       accessToken,
       refreshToken,
@@ -82,6 +82,7 @@ export const loginDriver = async (req, res) => {
           vehicleType: driver.vehicle.vehicleType,
         },
       },
+      accessToken,
     });
   } catch (error) {
     console.error("Error during login:", error);
@@ -91,6 +92,30 @@ export const loginDriver = async (req, res) => {
   }
 };
 
-export const getProfile = async (req, res) => {
+export const getDriverProfile = async (req, res) => {
   res.status(200).json(req.driver);
+};
+
+export const logoutDriver = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    return res.status(400).json({ message: "No refresh token provided" });
+  }
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const driver = await driverModel.findById(decoded._id);
+    if (!driver) {
+      return res.status(404).json({ message: "Driver not found" });
+    }
+    await blacklistTokenModel.create({
+      token: refreshToken,
+      userId: driver._id,
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+    });
+    res.clearCookie("refreshToken");
+    return res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
 };

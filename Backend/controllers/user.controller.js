@@ -2,7 +2,7 @@ import { createUser } from "../services/user.service.js";
 import { validationResult } from "express-validator";
 import { hashPassword, comparePassword } from "../utils/password.utils.js";
 import { generateToken } from "../utils/generateToken.utils.js";
-import userModel from "../Models/user.model.js";
+import userModel from "../models/user.model.js";
 import blacklistTokenModel from "../models/blacklistToken.model.js";
 import jwt from "jsonwebtoken";
 
@@ -86,9 +86,6 @@ export const logoutUser = async (req, res) => {
 
   try {
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-    if (!decoded) {
-      return res.status(401).json({ message: "User" });
-    }
 
     const user = await userModel.findById(decoded._id);
     if (!user) {

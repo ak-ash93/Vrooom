@@ -19,9 +19,10 @@ const blacklistTokenSchema = new mongoose.Schema({
     type: Date,
     default: function () {
       const logoutTime = Date.now();
-      return new Date(logoutTime + 25);
+      return new Date(logoutTime + 25 * 60 * 1000);
     },
   },
 });
 
-export default mongoose.model("blacklistToken", blacklistTokenSchema);
+export default mongoose.models.blacklistToken ||
+  mongoose.model("blacklistToken", blacklistTokenSchema);

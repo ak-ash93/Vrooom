@@ -541,3 +541,297 @@ curl -X POST http://localhost:4000/drivers/register \
   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
+
+## Endpoint: `/drivers/login`
+
+### Description
+
+This endpoint is used to authenticate an existing driver. It validates the input data, checks the driver's credentials, and returns access and refresh tokens upon successful login.
+
+### Method
+
+`POST`
+
+### Request Body
+
+The following fields are required in the request body:
+
+```json
+{
+  "email": "string (valid email format)",
+  "password": "string (min: 8 characters)"
+}
+```
+
+### Validation Rules
+
+- `email`: Must be a valid email address.
+- `password`: Must be at least 8 characters long.
+
+### Responses
+
+#### Success Response
+
+- **Status Code**: `200 OK`
+- **Response Body**:
+
+```json
+{
+  "driver": {
+    "_id": "string",
+    "fullname": {
+      "firstname": "string",
+      "lastname": "string"
+    },
+    "email": "string",
+    "phone": "string",
+    "vehicle": {
+      "color": "string",
+      "registration": "string",
+      "vehicleCapacity": "number",
+      "vehicleType": "string"
+    }
+  },
+  "accessToken": "string"
+}
+```
+
+#### Validation Error
+
+- **Status Code**: `400 Bad Request`
+- **Response Body**:
+
+```json
+{
+  "errors": [
+    {
+      "msg": "string",
+      "param": "string",
+      "location": "string"
+    }
+  ]
+}
+```
+
+#### Authentication Error
+
+- **Status Code**: `401 Unauthorized`
+- **Response Body**:
+
+```json
+{
+  "message": "Credentials don't match"
+}
+```
+
+#### Internal Server Error
+
+- **Status Code**: `500 Internal Server Error`
+- **Response Body**:
+
+```json
+{
+  "message": "Server Error. Please try again later."
+}
+```
+
+### Example Request
+
+```bash
+curl -X POST http://localhost:4000/drivers/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john.doe@example.com",
+    "password": "password123"
+  }'
+```
+
+### Example Success Response
+
+```json
+{
+  "driver": {
+    "_id": "64f1c2e7e4b0f5a1d8c9a123",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com",
+    "phone": "1234567890",
+    "vehicle": {
+      "color": "red",
+      "registration": "ABC1234",
+      "vehicleCapacity": 5,
+      "vehicleType": "sedan"
+    }
+  },
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+## Endpoint: `/drivers/profile`
+
+### Description
+
+This endpoint is used to retrieve the profile information of the currently authenticated driver. It requires a valid access token in the `Authorization` header.
+
+### Method
+
+`GET`
+
+### Request Headers
+
+- `Authorization`: `Bearer <access_token>`
+
+### Responses
+
+#### Success Response
+
+- **Status Code**: `200 OK`
+- **Response Body**:
+
+```json
+{
+  "_id": "string",
+  "fullname": {
+    "firstname": "string",
+    "lastname": "string"
+  },
+  "email": "string",
+  "phone": "string",
+  "vehicle": {
+    "color": "string",
+    "registration": "string",
+    "vehicleCapacity": "number",
+    "vehicleType": "string"
+  },
+  "createdAt": "string",
+  "updatedAt": "string"
+}
+```
+
+#### Authentication Error
+
+- **Status Code**: `401 Unauthorized`
+- **Response Body**:
+
+```json
+{
+  "message": "Unauthorized"
+}
+```
+
+#### Internal Server Error
+
+- **Status Code**: `500 Internal Server Error`
+- **Response Body**:
+
+```json
+{
+  "message": "Internal Server Error"
+}
+```
+
+### Example Request
+
+```bash
+curl -X GET http://localhost:4000/drivers/profile \
+  -H "Authorization: Bearer <access_token>"
+```
+
+### Example Success Response
+
+```json
+{
+  "_id": "64f1c2e7e4b0f5a1d8c9a123",
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.doe@example.com",
+  "phone": "1234567890",
+  "vehicle": {
+    "color": "red",
+    "registration": "ABC1234",
+    "vehicleCapacity": 5,
+    "vehicleType": "sedan"
+  },
+  "createdAt": "2023-10-01T12:00:00.000Z",
+  "updatedAt": "2023-10-01T12:00:00.000Z"
+}
+```
+
+## Endpoint: `/drivers/logout`
+
+### Description
+
+This endpoint is used to log out the current driver by invalidating the refresh token. It requires the refresh token to be sent as a cookie.
+
+### Method
+
+`GET`
+
+### Request Cookies
+
+- `refreshToken`: string
+
+### Responses
+
+#### Success Response
+
+- **Status Code**: `200 OK`
+- **Response Body**:
+
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+#### No Refresh Token Provided
+
+- **Status Code**: `400 Bad Request`
+- **Response Body**:
+
+```json
+{
+  "message": "No refresh token provided"
+}
+```
+
+#### Unauthorized
+
+- **Status Code**: `404 Not Found`
+- **Response Body**:
+
+```json
+{
+  "message": "Driver not found"
+}
+```
+
+#### Internal Server Error
+
+- **Status Code**: `500 Internal Server Error`
+- **Response Body**:
+
+```json
+{
+  "message": "Server Error"
+}
+```
+
+### Example Request
+
+```bash
+curl -X GET http://localhost:4000/drivers/logout \
+  -H "Cookie: refreshToken=<refresh_token>"
+```
+
+### Example Success Response
+
+```json
+{
+  "message": "Logged out successfully"
+}
+```
