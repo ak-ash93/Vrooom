@@ -38,9 +38,6 @@ export const authDriver = async (req, res, next) => {
     authHeader && authHeader.startsWith("Bearer")
       ? authHeader.split(" ")[1]
       : null;
-  console.log(token);
-
-  console.log("hello");
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
