@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Driverlogin = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [userData, setUserData] = useState({});
+  const [driverData, setDriverData] = useState({});
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -12,12 +12,12 @@ const Driverlogin = () => {
       alert("Please fill in all fields");
       return;
     }
-    const newUserData = {
+    const newDriverData = {
       email,
       password,
     };
-    setUserData(newUserData);
-    console.log("User Data:", newUserData);
+    setDriverData(newDriverData);
+
     setEmail("");
     setPassword("");
   };
