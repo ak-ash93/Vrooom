@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+/* App.css */
+@font-face {
+  font-family: "Rg";
+  font-style: normal;
+  font-weight: normal;
+  src: url("/fonts/Rg.otf") format("opentype");
+}
+.poppins-regular {
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+}
+
+.poppins-italic {
+  font-family: "Poppins", sans-serif;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.heading-font {
+  font-family: "Rg", sans-serif;
+  font-weight: normal;
+}
