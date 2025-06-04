@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../../store/authStore";
 
 const Driverlogin = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [driverData, setDriverData] = useState({});
+
+  const driverLogin = useAuthStore((state) => state.loginAsDriver);
+
+  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -12,14 +16,15 @@ const Driverlogin = () => {
       alert("Please fill in all fields");
       return;
     }
-    const newDriverData = {
+    const driverData = {
       email,
-      password,
     };
-    setDriverData(newDriverData);
+
+    driverLogin(driverData);
 
     setEmail("");
     setPassword("");
+    navigate("/driverdashboard");
   };
   return (
     <div className="p-7 h-screen w-screen border-2 flex flex-col justify-between bg-white text-black">
@@ -31,7 +36,6 @@ const Driverlogin = () => {
           onSubmit={(e) => {
             handleLogin(e);
           }}
-          className="poppins-regular "
         >
           <h3 className="text-lg font-medium mb-2">Enter Your Email</h3>
           <input
@@ -60,7 +64,7 @@ const Driverlogin = () => {
             Login
           </button>
         </form>
-        <p className="text-center mt-1.5 text-md">
+        <p className="text-center mt-2 text-sm text-gray-600">
           Want to be a driver?
           <Link to="/driversignup" className="text-blue-800 ml-2">
             Create an account

@@ -1,7 +1,3 @@
-ak-ash93: i want you to write a docs (readme.md)file for the frontend part
-
-Workspace: Collecting workspace information```markdown
-
 # VRoom Frontend
 
 This is the frontend part of the VRoom application, built with React and Vite.

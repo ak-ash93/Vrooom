@@ -1,28 +1,29 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../../store/authStore";
 
 const Userlogin = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [userData, setUserData] = useState({});
+
+  const userLogin = useAuthStore((state) => state.loginAsUser);
+  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (email === "" || password === "") {
-      alert("Please fill in all fields");
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
       return;
     }
-    const newUserData = {
-      email,
-      password,
-    };
-    setUserData(newUserData);
-    console.log("User Data:", newUserData);
+    const userData = { email };
+    userLogin(userData);
     setEmail("");
     setPassword("");
+    navigate("/userdashboard");
   };
   return (
-    <div className="p-7 h-screen w-screen border-2 flex flex-col justify-between bg-white text-black">
+    <div className="p-7 h-screen w-screen border-2 flex flex-col justify-between bg-white text-black ">
       <div>
         <p className="heading-font mb-10 text-gray-900 px-5 text-xl font-extrabold ">
           VRoom
@@ -60,7 +61,7 @@ const Userlogin = () => {
             Login
           </button>
         </form>
-        <p className="text-center mt-1.5 text-md">
+        <p className="text-center mt-2 text-sm text-gray-600">
           New here?
           <Link to="/signup" className="text-blue-800 ml-2">
             Create an account

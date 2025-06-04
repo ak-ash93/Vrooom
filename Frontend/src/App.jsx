@@ -6,6 +6,7 @@ import Userlogin from "./pages/users/Userlogin";
 import Usersignup from "./pages/users/Usersignup";
 import Driverlogin from "./pages/drivers/Driverlogin";
 import Driversignup from "./pages/drivers/Driversignup";
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
   return (
@@ -17,6 +18,14 @@ const App = () => {
         <Route path="/driverlogin" element={<Driverlogin />}></Route>
         <Route path="/driversignup" element={<Driversignup />}></Route>
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        theme="light"
+        hideProgressBar={true}
+        newestOnTop={true}
+        closeOnClick={true}
+      />
     </>
   );
 };
